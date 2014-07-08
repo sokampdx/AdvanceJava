@@ -56,4 +56,35 @@ public class Project1Test extends InvokeMainTestCase {
         String errorMessage = Project1.USAGE;
         assertThatStandardErrorContains(errorMessage);
     }
+
+    @Test
+    public void whenTooManyArgumentPrintArgumentOverflowToStandardError(){
+        String errorMessage = Project1.TOO_MANY_COMMAND_LINE_ARGUMENTS;
+        String[] args = createArgumentsForTest(Project1.ARGUMENT_UPPER_LIMIT + 1);
+        assertThatStandardErrorContains(errorMessage, args);
+    }
+
+    private String[] createArgumentsForTest(int numberOfArguments) {
+        String[] args = new String[numberOfArguments];
+        for (int i = 0; i < numberOfArguments; i++)
+            args[i] = String.valueOf(i);
+        return args;
+    }
+
+    @Test
+    public void whenThereAreLowerLimitOfArgumentExitCodeIsZero(){
+        String[] args = createArgumentsForTest(Project1.ARGUMENT_LOWER_LIMIT);
+        assertThatArgumentsAreValid(args);
+    }
+
+    private void assertThatArgumentsAreValid(String... args) {
+        MainMethodResult result = invokeProjectMain(args);
+        assertThat(result.getExitCode(), equalTo(0));
+    }
+
+    @Test
+    public void whenThereAreUpperLimitOfArgumentExitCodeIsZero(){
+        String[] args = createArgumentsForTest(Project1.ARGUMENT_UPPER_LIMIT);
+        assertThatArgumentsAreValid(args);
+    }
 }
