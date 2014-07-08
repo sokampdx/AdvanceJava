@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import edu.pdx.cs410J.InvokeMainTestCase;
-import static junit.framework.Assert.assertEquals;
+// import static junit.framework.Assert.assertEquals;
 
 /**
  * Tests the functionality in the {@link Project1} main class.
