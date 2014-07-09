@@ -43,6 +43,7 @@ public class Project1Test extends InvokeMainTestCase {
     private void assertThatStandardErrorContains(String errorMessage, String... args) {
         MainMethodResult result = invokeProjectMain(args);
         assertThat(result.getErr(), containsString(errorMessage));
+        assertThat(result.getExitCode(), equalTo(1));
     }
 
     @Test
@@ -82,11 +83,11 @@ public class Project1Test extends InvokeMainTestCase {
         assertThat(result.getExitCode(), equalTo(0));
     }
 
-    @Test
-    public void whenThereAreUpperLimitOfArgumentExitCodeIsZero(){
-        String[] args = createArgumentsForTest(Project1.ARGUMENT_UPPER_LIMIT);
-        assertThatArgumentsAreValid(args);
-    }
+//    @Test
+//    public void whenThereAreUpperLimitOfArgumentExitCodeIsZero(){
+//        String[] args = createArgumentsForTest(Project1.ARGUMENT_UPPER_LIMIT);
+//        assertThatArgumentsAreValid(args);
+//    }
 
     @Test
     public void whenThereAreSevenArgumentFirstIsNotOptionExitCodeIs1(){
