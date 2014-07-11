@@ -10,21 +10,22 @@ public class Project1 {
     public static final String USAGE = "usage: java edu.pdx.cs410J.sokam.Project1 [-(print|README)] name flightNumber src departTime dest arriveTime";
     public static final String NOT_ENOUGH_COMMAND_LINE_ARGUMENTS = "Not enough command line arguments";
     public static final String TOO_MANY_COMMAND_LINE_ARGUMENTS = "There are too many command line arguments.";
-    public static final int ARGUMENT_LOWER_LIMIT = 6;
-    public static final int ARGUMENT_UPPER_LIMIT = 8;
+    public static final int ARGUMENT_WITH_NO_OPTION = 6;
+    public static final int ARGUMENT_WITH_ONE_OPTION = 7;
+    public static final int ARGUMENT_WITH_TWO_OPTION = 8;
     public static final String PRINT = "-print";
     public static final String README = "README";
     public static final String INCORRECT_COMMAND_LINE_ARGUMENTS = "Incorrect Command Line Arguments";
 
     public static void main(String[] args) {
         Class c = AbstractAirline.class;  // Refer to one of Dave's classes so that we can be sure it is on the classpath
-        if (args.length < ARGUMENT_LOWER_LIMIT)
+        if (args.length < ARGUMENT_WITH_NO_OPTION)
             printArgumentIsNotValid(NOT_ENOUGH_COMMAND_LINE_ARGUMENTS);
-        if (args.length > ARGUMENT_UPPER_LIMIT)
+        if (args.length > ARGUMENT_WITH_TWO_OPTION)
             printArgumentIsNotValid(TOO_MANY_COMMAND_LINE_ARGUMENTS);
-        if (args.length == (ARGUMENT_LOWER_LIMIT+1) && isNotOption(args[0]))
+        if (args.length == (ARGUMENT_WITH_ONE_OPTION) && isNotOption(args[0]))
             printArgumentIsNotValid(INCORRECT_COMMAND_LINE_ARGUMENTS);
-        if (args.length == (ARGUMENT_UPPER_LIMIT) && (args[0] == args[1] || isNotOption(args[0]) || isNotOption(args[1])))
+        if (args.length == (ARGUMENT_WITH_TWO_OPTION) && (args[0] == args[1] || isNotOption(args[0]) || isNotOption(args[1])))
             printArgumentIsNotValid(INCORRECT_COMMAND_LINE_ARGUMENTS);
 
         System.exit(0);

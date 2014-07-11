@@ -61,7 +61,7 @@ public class Project1Test extends InvokeMainTestCase {
     @Test
     public void whenTooManyArgumentPrintArgumentOverflowToStandardError(){
         String errorMessage = Project1.TOO_MANY_COMMAND_LINE_ARGUMENTS;
-        String[] args = createArgumentsForTest(Project1.ARGUMENT_UPPER_LIMIT + 1);
+        String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_TWO_OPTION + 1);
         assertThatStandardErrorContains(errorMessage, args);
     }
 
@@ -74,7 +74,7 @@ public class Project1Test extends InvokeMainTestCase {
 
     @Test
     public void whenThereAreLowerLimitOfArgumentExitCodeIsZero(){
-        String[] args = createArgumentsForTest(Project1.ARGUMENT_LOWER_LIMIT);
+        String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_NO_OPTION);
         assertThatArgumentsAreValid(args);
     }
 
@@ -85,42 +85,42 @@ public class Project1Test extends InvokeMainTestCase {
 
 //    @Test
 //    public void whenThereAreUpperLimitOfArgumentExitCodeIsZero(){
-//        String[] args = createArgumentsForTest(Project1.ARGUMENT_UPPER_LIMIT);
+//        String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_TWO_OPTION);
 //        assertThatArgumentsAreValid(args);
 //    }
 
     @Test
     public void whenThereAreSevenArgumentFirstIsNotOptionExitCodeIs1(){
-        String[] args = createArgumentsForTest(Project1.ARGUMENT_LOWER_LIMIT+1);
+        String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_NO_OPTION +1);
         String errorMessage = Project1.INCORRECT_COMMAND_LINE_ARGUMENTS;
         assertThatStandardErrorContains(errorMessage, args);
     }
 
     @Test
     public void whenThereAreEightArgumentFirstTwoIsNotOptionExitCodeIs1(){
-        String[] args = createArgumentsForTest(Project1.ARGUMENT_UPPER_LIMIT);
+        String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_TWO_OPTION);
         String errorMessage = Project1.INCORRECT_COMMAND_LINE_ARGUMENTS;
         assertThatStandardErrorContains(errorMessage, args);
     }
 
     @Test
     public void whenThereAreSevenArgumentFirstIsOptionExitCodeIsZero(){
-        String[] args = createArgumentsForTest(Project1.ARGUMENT_LOWER_LIMIT+1);
+        String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_ONE_OPTION);
         args[0] = Project1.PRINT;
         assertThatArgumentsAreValid(args);
     }
 
     @Test
     public void whenThereAreEightArgumentFirstTwoAreOptionExitCodeIsZero(){
-        String[] args = createArgumentsForTest(Project1.ARGUMENT_UPPER_LIMIT);
+        String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_TWO_OPTION);
         args[0] = Project1.PRINT;
         args[1] = Project1.README;
         assertThatArgumentsAreValid(args);
     }
 
     @Test
-    public void whenThereAreEightArgumentFirstTwoOptionAreSameExitCodeIs(){
-        String[] args = createArgumentsForTest(Project1.ARGUMENT_UPPER_LIMIT);
+    public void whenThereAreEightArgumentFirstTwoOptionAreSameExitCodeIs1(){
+        String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_TWO_OPTION);
         args[0] = Project1.PRINT;
         args[1] = Project1.PRINT;
         String errorMessage = Project1.INCORRECT_COMMAND_LINE_ARGUMENTS;
