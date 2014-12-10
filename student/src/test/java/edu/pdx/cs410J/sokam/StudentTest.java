@@ -1,6 +1,7 @@
 package edu.pdx.cs410J.sokam;
 
 import edu.pdx.cs410J.InvokeMainTestCase;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -16,16 +17,73 @@ import static org.hamcrest.core.StringContains.containsString;
 public class StudentTest extends InvokeMainTestCase
 {
 
+  private MainMethodResult invokeStudentMain(String... args) {
+    return invokeMain(Student.class, args);
+  }
+
+  private void assertThatStandardErrorContain(String errorMessage, String... args) {
+    MainMethodResult result = invokeStudentMain(args);
+    assertThat(result.getErr(), containsString(errorMessage));
+  }
+
+  private void assertThatStandardOutputContain(String outputMessage, String... args) {
+    MainMethodResult result = invokeStudentMain(args);
+    assertThat(result.getOut(), containsString(outputMessage));
+  }
+
   @Test
   public void invokingMainWithNoArgumentsHasExitCodeOf1() {
-    MainMethodResult result = invokeMain(Student.class);
+    MainMethodResult result = invokeStudentMain();
     assertThat(result.getExitCode(), equalTo(1));
   }
 
   @Test
   public void invokingMainWithNoArgumentsPrintsMissingArgumentsToStandardError() {
-    MainMethodResult result = invokeMain(Student.class);
-    assertThat(result.getErr(), containsString("Missing command line arguments"));
+    assertThatStandardErrorContain(Student.NOT_ENOUGH_ARGS_ERR);
   }
+
+  @Test
+  public void notEnoughCommandLineArgumentsShouldError() {
+    assertThatStandardErrorContain(Student.NOT_ENOUGH_ARGS_ERR, "fail");
+  }
+
+  @Test
+  public void notEnoughCommandLineArgumentsShouldPrintUsage() {
+    assertThatStandardErrorContain(Student.USAGE);
+  }
+
+  @Ignore
+  @Test
+  public void correctCommandLineArgumentsShouldExitZero() {
+    MainMethodResult result = invokeStudentMain("Dave", "male", "3.64");
+    assertThat(result.getExitCode(), equalTo(0));
+  }
+
+  @Test
+  public void nameShouldAppearAsOutput() {
+    String output = "Dave";
+    assertThatStandardOutputContain(output, output, "male", "3.64");
+  }
+
+  @Test
+  public void genderNotMaleOrFemaleShouldError() {
+    assertThatStandardErrorContain(Student.GENDER_ERR, "Dave", "cat", "1.23");
+  }
+
+  @Test
+  public void genderMaleShouldAppearAsHeInOutput() {
+    assertThatStandardOutputContain("He", "Dave", "male", "3.64");
+  }
+
+  @Test
+  public void genderFemaleShouldAppearAsSheInOutput() {
+    assertThatStandardOutputContain("She", "Daisy", "female", "3.64");
+  }
+
+  @Test
+  public void gpaNotDoubleShouldError() {
+    assertThatStandardErrorContain(Student.GPA_ERR, "Dave", "male", "abc");
+  }
+
 
 }
