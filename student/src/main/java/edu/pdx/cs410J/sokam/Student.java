@@ -14,6 +14,8 @@ public class Student extends Human {
   static final String GENDER_ERR = "Gender must be male or female!";
   static final String GPA_ERR = "GPA must be a number!";
   static final String USAGE = "usage: java edu.pdx.cs410J.sokam.Student name gender gpa class*";
+  static final String PRINT_STAT = "%s has a GPA of %s and is taking %d class%s";
+  static final String PRINT_COMMENT = "%s says \"This class is too much work\".";
 
   /**                                                                               
    * Creates a new <code>Student</code>                                             
@@ -69,11 +71,14 @@ public class Student extends Human {
     String gender = args[1];
     String gpa = args[2];
     String pronouns = "";
+    String stat = PRINT_STAT;
+    String classes = "";
+    String comment = PRINT_COMMENT;
     String output = "";
 
-    if (gender == "male")
+    if (gender.equalsIgnoreCase("male"))
       pronouns = "He";
-    else if (gender == "female")
+    else if (gender.equalsIgnoreCase("female"))
       pronouns = "She";
     else {
       System.err.println(GENDER_ERR);
@@ -85,8 +90,8 @@ public class Student extends Human {
       System.exit(1);
     }
 
-    output = name + " " + pronouns;
-    System.out.print(output);
+    output = String.format(stat + comment, name, gpa, 0, classes, pronouns);
+    System.out.println(output);
     System.exit(0);
   }
 }

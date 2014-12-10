@@ -24,11 +24,13 @@ public class StudentTest extends InvokeMainTestCase
   private void assertThatStandardErrorContain(String errorMessage, String... args) {
     MainMethodResult result = invokeStudentMain(args);
     assertThat(result.getErr(), containsString(errorMessage));
+    assertThat(result.getExitCode(), equalTo(1));
   }
 
   private void assertThatStandardOutputContain(String outputMessage, String... args) {
     MainMethodResult result = invokeStudentMain(args);
     assertThat(result.getOut(), containsString(outputMessage));
+    assertThat(result.getExitCode(), equalTo(0));
   }
 
   @Test
@@ -81,8 +83,34 @@ public class StudentTest extends InvokeMainTestCase
   }
 
   @Test
+  public void caseInsensitiveFemaleIsValid() {
+    assertThatStandardOutputContain("She", "Daisy", "FeMale", "1.23");
+  }
+
+  @Test
+  public void caseInsensitiveMaleIsValid() {
+    assertThatStandardOutputContain("He", "Dave", "MaLe", "1.23");
+  }
+
+  @Test
   public void gpaNotDoubleShouldError() {
     assertThatStandardErrorContain(Student.GPA_ERR, "Dave", "male", "abc");
+  }
+
+  @Test
+  public void gpaShouldAppearInOutput() {
+    String output = "3.64";
+    assertThatStandardOutputContain(output, "Dave", "male", output);
+  }
+
+  @Test
+  public void noClassShouldOutputZeroClass() {
+    String name = "Dave";
+    String gender = "male";
+    String gpa = "3.64";
+    String stat = String.format(Student.PRINT_STAT, name, gpa, 0, "");
+    String comment = String.format(Student.PRINT_COMMENT, "He");
+    assertThatStandardOutputContain(stat + comment, name, gender, gpa);
   }
 
 
