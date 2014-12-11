@@ -17,22 +17,6 @@ import static org.hamcrest.core.StringContains.containsString;
 public class StudentTest extends InvokeMainTestCase
 {
 
-  private MainMethodResult invokeStudentMain(String... args) {
-    return invokeMain(Student.class, args);
-  }
-
-  private void assertThatStandardErrorContain(String errorMessage, String... args) {
-    MainMethodResult result = invokeStudentMain(args);
-    assertThat(result.getErr(), containsString(errorMessage));
-    assertThat(result.getExitCode(), equalTo(1));
-  }
-
-  private void assertThatStandardOutputContain(String outputMessage, String... args) {
-    MainMethodResult result = invokeStudentMain(args);
-    assertThat(result.getOut(), containsString(outputMessage));
-    assertThat(result.getExitCode(), equalTo(0));
-  }
-
   @Test
   public void invokingMainWithNoArgumentsHasExitCodeOf1() {
     MainMethodResult result = invokeStudentMain();
@@ -108,10 +92,81 @@ public class StudentTest extends InvokeMainTestCase
     String name = "Dave";
     String gender = "male";
     String gpa = "3.64";
-    String stat = String.format(Student.PRINT_STAT, name, gpa, 0, "");
+    String classes = ". ";
+    String stat = String.format(Student.PRINT_STAT, name, gpa, 0, classes);
     String comment = String.format(Student.PRINT_COMMENT, "He");
     assertThatStandardOutputContain(stat + comment, name, gender, gpa);
   }
 
+  @Test
+  public void oneClassShouldOutputOneClass() {
+    String name = "Dave";
+    String gender = "male";
+    String gpa = "3.64";
+    String class1 = "Algorithm";
+    String classes = ": " + class1 + ". ";
+    String stat = String.format(Student.PRINT_STAT, name, gpa, 1, classes);
+    String comment = String.format(Student.PRINT_COMMENT, "He");
+    assertThatStandardOutputContain(stat + comment, name, gender, gpa, class1);
+  }
+
+  @Test
+  public void twoClassShouldOutputTwoClassesWithAnd() {
+    String name = "Dave";
+    String gender = "male";
+    String gpa = "3.64";
+    String class1 = "Algorithm";
+    String class2 = "Operating Systems";
+    String classes = "es: " + class1 + " and " + class2 + ". ";
+    String stat = String.format(Student.PRINT_STAT, name, gpa, 2, classes);
+    String comment = String.format(Student.PRINT_COMMENT, "He");
+    assertThatStandardOutputContain(stat + comment, name, gender, gpa, class1, class2);
+  }
+
+  @Test
+  public void threeClassShouldOutputClassesWithSeparatorWithAnd() {
+    String name = "Dave";
+    String gender = "male";
+    String gpa = "3.64";
+    String class1 = "Algorithm";
+    String class2 = "Operating Systems";
+    String class3 = "Java";
+    String classes = "es: " + class1 + ", " + class2 + "," + " and " + class3 + ". ";
+    String stat = String.format(Student.PRINT_STAT, name, gpa, 3, classes);
+    String comment = String.format(Student.PRINT_COMMENT, "He");
+    assertThatStandardOutputContain(stat + comment, name, gender, gpa, class1, class2, class3);
+  }
+
+  @Test
+  public void fiveOrMoreClassShouldOutputClassesWithSeparatorWithAnd() {
+    String name = "Dave";
+    String gender = "male";
+    String gpa = "3.64";
+    String class1 = "Algorithm";
+    String class2 = "Operating Systems";
+    String class3 = "Java";
+    String class4 = "Compiler";
+    String class5 = "Security";
+    String classes = "es: " + class1 + ", " + class2 + ", " + class3 + ", " + class4 + "," + " and " + class5 + ". ";
+    String stat = String.format(Student.PRINT_STAT, name, gpa, 5, classes);
+    String comment = String.format(Student.PRINT_COMMENT, "He");
+    assertThatStandardOutputContain(stat + comment, name, gender, gpa, class1, class2, class3, class4, class5);
+  }
+
+  private MainMethodResult invokeStudentMain(String... args) {
+    return invokeMain(Student.class, args);
+  }
+
+  private void assertThatStandardErrorContain(String errorMessage, String... args) {
+    MainMethodResult result = invokeStudentMain(args);
+    assertThat(result.getErr(), containsString(errorMessage));
+    assertThat(result.getExitCode(), equalTo(1));
+  }
+
+  private void assertThatStandardOutputContain(String outputMessage, String... args) {
+    MainMethodResult result = invokeStudentMain(args);
+    assertThat(result.getOut(), containsString(outputMessage));
+    assertThat(result.getExitCode(), equalTo(0));
+  }
 
 }

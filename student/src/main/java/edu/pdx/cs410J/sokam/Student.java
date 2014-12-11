@@ -30,8 +30,18 @@ public class Student extends Human {
    * @param gender                                                                  
    *        The student's gender ("male" or "female", case insensitive)             
    */                                                                               
-  public Student(String name, ArrayList classes, double gpa, String gender) {
+
+//  protected String name;
+//  protected String gender;
+//  protected double gpa;
+//  protected ArrayList<String> classes;
+
+  public Student(String name, String gender, double gpa, ArrayList classes) {
     super(name);
+//    this.name = name;
+//    this.gender = gender;
+//    this.gpa = gpa;
+//    this.classes = new ArrayList<String>(classes);
   }
 
   /**                                                                               
@@ -50,10 +60,6 @@ public class Student extends Human {
     return null;
   }
 
-  static boolean isNumber(String number) {
-    return number.matches("\\d+(\\.\\d+)?");
-  }
-
   /**
    * Main program that parses the command line, creates a
    * <code>Student</code>, and prints a description of the student to
@@ -70,12 +76,61 @@ public class Student extends Human {
     String name = args[0];
     String gender = args[1];
     String gpa = args[2];
-    String pronouns = "";
-    String stat = PRINT_STAT;
-    String classes = "";
-    String comment = PRINT_COMMENT;
-    String output = "";
 
+    String pronouns = getPronouns(gender);
+    int numArgs = args.length;
+    int numClasses = numArgs - MINIMUM_ARGS;
+    String classes = getClasses(numArgs, numClasses, args);
+    VerityGpa(gpa);
+
+    String stat = PRINT_STAT;
+    String comment = PRINT_COMMENT;
+    String output = String.format(stat + comment, name, gpa, numClasses, classes, pronouns);
+
+    System.out.println(output);
+    System.exit(0);
+  }
+
+  private static String getClasses(int numArgs, int numClasses, String... args) {
+    int lastIndex = numArgs -1;
+    String begin = "";
+    String classes = ". ";
+    String lastConnector = "";
+    String betweenConnector = "";
+
+    if (numClasses > 0) {
+      if (numClasses > 1) {
+        begin = "es";
+        lastConnector = " and";
+      }
+      if (numClasses > 2)
+        betweenConnector = ",";
+
+      for (int i = lastIndex; i >= MINIMUM_ARGS; --i) {
+        classes = " " + args[i] + classes;
+        if (i == lastIndex)
+          classes = lastConnector + classes;
+        if (i != MINIMUM_ARGS)
+          classes = betweenConnector + classes;
+      }
+      classes = begin + ":" + classes;
+    }
+    return classes;
+  }
+
+  private static void VerityGpa(String gpa) {
+    if (!isNumber(gpa)) {
+      System.err.println(GPA_ERR);
+      System.exit(1);
+    }
+  }
+
+  private static boolean isNumber(String number) {
+    return number.matches("\\d+(\\.\\d+)?");
+  }
+
+  private static String getPronouns(String gender) {
+    String pronouns = "";
     if (gender.equalsIgnoreCase("male"))
       pronouns = "He";
     else if (gender.equalsIgnoreCase("female"))
@@ -84,14 +139,6 @@ public class Student extends Human {
       System.err.println(GENDER_ERR);
       System.exit(1);
     }
-
-    if (!isNumber(gpa)) {
-      System.err.println(GPA_ERR);
-      System.exit(1);
-    }
-
-    output = String.format(stat + comment, name, gpa, 0, classes, pronouns);
-    System.out.println(output);
-    System.exit(0);
+    return pronouns;
   }
 }
