@@ -38,7 +38,6 @@ public class StudentTest extends InvokeMainTestCase
     assertThatStandardErrorContain(Student.USAGE);
   }
 
-  @Ignore
   @Test
   public void correctCommandLineArgumentsShouldExitZero() {
     MainMethodResult result = invokeStudentMain("Dave", "male", "3.64");
@@ -93,7 +92,7 @@ public class StudentTest extends InvokeMainTestCase
     String gender = "male";
     String gpa = "3.64";
     String classes = ". ";
-    String stat = String.format(Student.PRINT_STAT, name, gpa, 0, classes);
+    String stat = String.format(Student.PRINT_STAT, name, Double.parseDouble(gpa), 0, classes);
     String comment = String.format(Student.PRINT_COMMENT, "He");
     assertThatStandardOutputContain(stat + comment, name, gender, gpa);
   }
@@ -105,7 +104,7 @@ public class StudentTest extends InvokeMainTestCase
     String gpa = "3.64";
     String class1 = "Algorithm";
     String classes = ": " + class1 + ". ";
-    String stat = String.format(Student.PRINT_STAT, name, gpa, 1, classes);
+    String stat = String.format(Student.PRINT_STAT, name, Double.parseDouble(gpa), 1, classes);
     String comment = String.format(Student.PRINT_COMMENT, "He");
     assertThatStandardOutputContain(stat + comment, name, gender, gpa, class1);
   }
@@ -118,7 +117,7 @@ public class StudentTest extends InvokeMainTestCase
     String class1 = "Algorithm";
     String class2 = "Operating Systems";
     String classes = "es: " + class1 + " and " + class2 + ". ";
-    String stat = String.format(Student.PRINT_STAT, name, gpa, 2, classes);
+    String stat = String.format(Student.PRINT_STAT, name, Double.parseDouble(gpa), 2, classes);
     String comment = String.format(Student.PRINT_COMMENT, "He");
     assertThatStandardOutputContain(stat + comment, name, gender, gpa, class1, class2);
   }
@@ -132,7 +131,7 @@ public class StudentTest extends InvokeMainTestCase
     String class2 = "Operating Systems";
     String class3 = "Java";
     String classes = "es: " + class1 + ", " + class2 + "," + " and " + class3 + ". ";
-    String stat = String.format(Student.PRINT_STAT, name, gpa, 3, classes);
+    String stat = String.format(Student.PRINT_STAT, name, Double.parseDouble(gpa), 3, classes);
     String comment = String.format(Student.PRINT_COMMENT, "He");
     assertThatStandardOutputContain(stat + comment, name, gender, gpa, class1, class2, class3);
   }
@@ -148,7 +147,7 @@ public class StudentTest extends InvokeMainTestCase
     String class4 = "Compiler";
     String class5 = "Security";
     String classes = "es: " + class1 + ", " + class2 + ", " + class3 + ", " + class4 + "," + " and " + class5 + ". ";
-    String stat = String.format(Student.PRINT_STAT, name, gpa, 5, classes);
+    String stat = String.format(Student.PRINT_STAT, name, Double.parseDouble(gpa), 5, classes);
     String comment = String.format(Student.PRINT_COMMENT, "He");
     assertThatStandardOutputContain(stat + comment, name, gender, gpa, class1, class2, class3, class4, class5);
   }

@@ -1,5 +1,6 @@
 package edu.pdx.cs410J.sokam;
 
+import com.sun.tools.javac.code.Attribute;
 import edu.pdx.cs410J.lang.Human;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ public class Student extends Human {
   static final String GENDER_ERR = "Gender must be male or female!";
   static final String GPA_ERR = "GPA must be a number!";
   static final String USAGE = "usage: java edu.pdx.cs410J.sokam.Student name gender gpa class*";
-  static final String PRINT_STAT = "%s has a GPA of %s and is taking %d class%s";
+  static final String PRINT_STAT = "%s has a GPA of %.2f and is taking %d class%s";
   static final String PRINT_COMMENT = "%s says \"This class is too much work\".";
 
   /**                                                                               
@@ -31,33 +32,34 @@ public class Student extends Human {
    *        The student's gender ("male" or "female", case insensitive)             
    */                                                                               
 
-//  protected String name;
-//  protected String gender;
-//  protected double gpa;
-//  protected ArrayList<String> classes;
+  protected String name;
+  protected String gender;
+  protected double gpa;
+  protected ArrayList<String> classes;
 
-  public Student(String name, String gender, double gpa, ArrayList classes) {
+  public Student(String name, String gender, double gpa, ArrayList<String> classes) {
     super(name);
-//    this.name = name;
-//    this.gender = gender;
-//    this.gpa = gpa;
-//    this.classes = new ArrayList<String>(classes);
+    this.name = name;
+    this.gender = gender;
+    this.gpa = gpa;
+    this.classes = new ArrayList<>(classes);
   }
 
   /**                                                                               
    * All students say "This class is too much work"                                 
    */
   @Override
-  public String says() {                                                            
-    return null;
+  public String says() {
+    return String.format(PRINT_COMMENT, getPronouns());
   }
                                                                                     
   /**                                                                               
    * Returns a <code>String</code> that describes this                              
    * <code>Student</code>.                                                          
-   */                                                                               
+   */
+  @Override
   public String toString() {
-    return null;
+    return String.format(PRINT_STAT, this.name, this.gpa, this.classes.size(), getClassesString());
   }
 
   /**
@@ -74,27 +76,44 @@ public class Student extends Human {
     }
 
     String name = args[0];
-    String gender = args[1];
-    String gpa = args[2];
+    String gender = toVerifiedGender(args[1]);
+    double gpa = toNumberGpa(args[2]);
+    ArrayList<String> classes = new ArrayList<>(toClassArray(args));
 
-    String pronouns = getPronouns(gender);
-    int numArgs = args.length;
-    int numClasses = numArgs - MINIMUM_ARGS;
-    String classes = getClasses(numArgs, numClasses, args);
-    VerityGpa(gpa);
-
-    String stat = PRINT_STAT;
-    String comment = PRINT_COMMENT;
-    String output = String.format(stat + comment, name, gpa, numClasses, classes, pronouns);
-
-    System.out.println(output);
+    Student student = new Student (name, gender, gpa, classes);
+    System.out.println(student.toString() + student.says());
     System.exit(0);
   }
 
-  private static String getClasses(int numArgs, int numClasses, String... args) {
-    int lastIndex = numArgs -1;
+  private static String toVerifiedGender(String gender) {
+    if (isNotTheRightGender(gender)) {
+      System.err.println(GENDER_ERR);
+      System.exit(1);
+    }
+    return gender;
+  }
+
+  private static boolean isNotTheRightGender(String gender) {
+    return !(gender.equalsIgnoreCase("male") || gender.equalsIgnoreCase("female"));
+  }
+
+
+  private static ArrayList<String> toClassArray(String... args) {
+    int lastIndex = args.length;
+    ArrayList<String> classes = new ArrayList<String>();
+
+    for (int i = MINIMUM_ARGS; i < lastIndex; ++i) {
+      classes.add(args[i]);
+    }
+
+    return classes;
+  }
+
+  private String getClassesString() {
+    int numClasses = classes.size();
+    int lastIndex = numClasses -1;
     String begin = "";
-    String classes = ". ";
+    String classesString = ". ";
     String lastConnector = "";
     String betweenConnector = "";
 
@@ -106,30 +125,31 @@ public class Student extends Human {
       if (numClasses > 2)
         betweenConnector = ",";
 
-      for (int i = lastIndex; i >= MINIMUM_ARGS; --i) {
-        classes = " " + args[i] + classes;
+      for (int i = lastIndex; i >= 0; --i) {
+        classesString = " " + classes.get(i) + classesString;
         if (i == lastIndex)
-          classes = lastConnector + classes;
-        if (i != MINIMUM_ARGS)
-          classes = betweenConnector + classes;
+          classesString = lastConnector + classesString;
+        if (i != 0)
+          classesString = betweenConnector + classesString;
       }
-      classes = begin + ":" + classes;
+      classesString = begin + ":" + classesString;
     }
-    return classes;
+    return classesString;
   }
 
-  private static void VerityGpa(String gpa) {
+  private static double toNumberGpa(String gpa) {
     if (!isNumber(gpa)) {
       System.err.println(GPA_ERR);
       System.exit(1);
     }
+    return Double.parseDouble(gpa);
   }
 
   private static boolean isNumber(String number) {
     return number.matches("\\d+(\\.\\d+)?");
   }
 
-  private static String getPronouns(String gender) {
+  private String getPronouns() {
     String pronouns = "";
     if (gender.equalsIgnoreCase("male"))
       pronouns = "He";
