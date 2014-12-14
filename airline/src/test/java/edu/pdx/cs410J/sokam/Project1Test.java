@@ -1,5 +1,7 @@
 package edu.pdx.cs410J.sokam;
 
+import com.sun.deploy.util.ArrayUtil;
+import com.sun.tools.javac.util.ArrayUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertThat;
@@ -65,15 +67,27 @@ public class Project1Test extends InvokeMainTestCase {
     assertThatStandardErrorContains(errorMessage, args);
   }
 
-  private String[] createArgumentsForTest(int numberOfArguments) {
-    String[] args = new String[numberOfArguments];
-    for (int i = 0; i < numberOfArguments; i++)
-      args[i] = String.valueOf(i);
-    return args;
+  private String[] createArgumentsForTest(int numArgs) {
+    String[] info = {"Alaska Air", "1146", "PDX", "10/31/2014", "4:35", "SFO", "11/30/2014", "23:59"};
+    String[] options = {Project1.PRINT_OPTION, Project1.README_OPTION};
+    String[] both = new String[numArgs];
+    int extra = 0;
+    if (numArgs > Project1.ARGUMENT_WITH_TWO_OPTION)
+      extra = numArgs - Project1.ARGUMENT_WITH_TWO_OPTION;
+    int numOption = numArgs - Project1.ARGUMENT_WITH_NO_OPTION - extra;
+
+    System.arraycopy(options, 0, both, 0, numOption);
+    System.arraycopy(info, 0, both, numOption, info.length);
+
+    if (extra > 0) {
+      for (int i = Project1.ARGUMENT_WITH_TWO_OPTION; i < numArgs; ++i)
+        both[i] = Integer.toString(i);
+    }
+    return both;
   }
 
   @Test
-  public void minNumberOfArgumentShouldExitCodeIsZero(){
+  public void minNumberOfArgumentShouldExitZero(){
     String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_NO_OPTION);
     assertThatArgumentsAreValid(args);
   }
@@ -90,21 +104,31 @@ public class Project1Test extends InvokeMainTestCase {
 //  }
 
   @Test
-  public void whenTwoOptionAllowButFirstTwoArgumentsAreNotOptionShouldError(){
-    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_TWO_OPTION);
+  public void whenOneOptionAllowButFirstArgumentsIsNotOptionShouldError() {
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_ONE_OPTION);
+    args[0] = "whatever";
     String errorMessage = Project1.INCORRECT_COMMAND_LINE_ARGUMENTS;
     assertThatStandardErrorContains(errorMessage, args);
   }
 
   @Test
-  public void whenOneOptionAllowButFirstArgumentIsNotOptionShouldError(){
+  public void whenTwoOptionAllowButFirstTwoArgumentsAreNotOptionShouldError(){
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_TWO_OPTION);
+    args[0] = "whatever";
+    args[1] = "whenever";
+    String errorMessage = Project1.INCORRECT_COMMAND_LINE_ARGUMENTS;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void whenOneOptionAllowAndFirstArgumentIsAnOptionShouldExitZero(){
     String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_ONE_OPTION);
     args[0] = Project1.PRINT_OPTION;
     assertThatArgumentsAreValid(args);
   }
 
   @Test
-  public void whenTwoOptionAllowAndFirstTwoArgumentAreDifferentOptionExitCodeIsZero(){
+  public void whenTwoOptionAllowAndFirstTwoArgumentAreDifferentOptionShouldExitZero(){
     String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_TWO_OPTION);
     args[0] = Project1.PRINT_OPTION;
     args[1] = Project1.README_OPTION;
@@ -119,6 +143,79 @@ public class Project1Test extends InvokeMainTestCase {
     String errorMessage = Project1.INCORRECT_COMMAND_LINE_ARGUMENTS;
     assertThatStandardErrorContains(errorMessage, args);
   }
+
+  @Test
+  public void flightNumberNotANumberShouldError() {
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_NO_OPTION);
+    args[1] = "abc";
+    String errorMessage = Project1.INVALID_FLIGHT_NUMBER;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void srcAirportCodeIsInvalidWithNoOptionShouldError(){
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_NO_OPTION);
+    args[2] = "abcd";
+    String errorMessage = Project1.INVALID_AIRPORT_CODE;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void srcAirportCodeIsInvalidWithOneOptionShouldError(){
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_ONE_OPTION);
+    args[3] = "abcd";
+    String errorMessage = Project1.INVALID_AIRPORT_CODE;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void srcAirportCodeIsInvalidWithTwoOptionShouldError(){
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_TWO_OPTION);
+    args[4] = "abcd";
+    String errorMessage = Project1.INVALID_AIRPORT_CODE;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void destAirportCodeIsInvalidWithNoOptionShouldError(){
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_NO_OPTION);
+    args[5] = "abcd";
+    String errorMessage = Project1.INVALID_AIRPORT_CODE;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void departTimeWithInvalidHourShouldError() {
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_NO_OPTION);
+    args[4] = "31:00";
+    String errorMessage = Project1.INVALID_TIME;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void departTimeWithInvalidMinShouldError() {
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_NO_OPTION);
+    args[4] = "21:90";
+    String errorMessage = Project1.INVALID_TIME;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void arrivalTimeWithInvalidHourShouldError() {
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_TWO_OPTION);
+    args[9] = "31:00";
+    String errorMessage = Project1.INVALID_TIME;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void arrivalTimeWithInvalidMinShouldError() {
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_TWO_OPTION);
+    args[9] = "21:90";
+    String errorMessage = Project1.INVALID_TIME;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
 
 
 }
