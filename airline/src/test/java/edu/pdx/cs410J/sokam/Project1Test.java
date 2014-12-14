@@ -216,6 +216,87 @@ public class Project1Test extends InvokeMainTestCase {
     assertThatStandardErrorContains(errorMessage, args);
   }
 
+  @Test
+  public void departDateWithInvalidMonthShouldError() {
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_NO_OPTION);
+    args[3] = "13/13/2013";
+    String errorMessage = Project1.INVALID_DATE;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void departDateWithInvalidDayShouldError() {
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_NO_OPTION);
+    args[3] = "4/31/2014";
+    String errorMessage = Project1.INVALID_DATE;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void departDateWithInvalidLeapDayShouldError() {
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_NO_OPTION);
+    args[3] = "2/29/2014";
+    String errorMessage = Project1.INVALID_DATE;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void departDateWithInvalidYearShouldError() {
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_NO_OPTION);
+    args[3] = "12/13/0000";
+    String errorMessage = Project1.INVALID_DATE;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void departDateWithInvalidFormatShouldError() {
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_NO_OPTION);
+    args[3] = "Jan 3 1999";
+    String errorMessage = Project1.INVALID_DATE;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+
+  @Test
+  public void arrivalDateWithInvalidMonthShouldError() {
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_ONE_OPTION);
+    args[7] = "11/31/2013";
+    String errorMessage = Project1.INVALID_DATE;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void arrivalDateWithInvalidDayShouldError() {
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_TWO_OPTION);
+    args[8] = "3/33/2014";
+    String errorMessage = Project1.INVALID_DATE;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void arrivalDateWithInvalidLeapDayShouldError() {
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_ONE_OPTION);
+    args[7] = "2/29/2014";
+    String errorMessage = Project1.INVALID_DATE;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void arrivalDateWithInvalidYearShouldError() {
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_ONE_OPTION);
+    args[7] = "12/13/0000";
+    String errorMessage = Project1.INVALID_DATE;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
+  @Test
+  public void arrivalDateWithInvalidFormatShouldError() {
+    String[] args = createArgumentsForTest(Project1.ARGUMENT_WITH_ONE_OPTION);
+    args[7] = "Jan 3 1999";
+    String errorMessage = Project1.INVALID_DATE;
+    assertThatStandardErrorContains(errorMessage, args);
+  }
+
 
 
 }

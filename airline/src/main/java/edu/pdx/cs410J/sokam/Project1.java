@@ -2,6 +2,8 @@ package edu.pdx.cs410J.sokam;
 
 import edu.pdx.cs410J.AbstractAirline;
 
+import java.util.Arrays;
+
 /**
  * The main class for the CS410J airline Project
  */
@@ -19,6 +21,7 @@ public class Project1 {
   public static final String INVALID_FLIGHT_NUMBER = "Invalid Flight Number. Flight Number is numeric.";
   public static final String INVALID_AIRPORT_CODE = "Invalid Airport Code. Airport Code is a three letters code.";
   public static final String INVALID_TIME="Invalid Time.";
+  public static final String INVALID_DATE="Invalid Date.";
 
   public static void main(String[] args) {
     Class c = AbstractAirline.class;  // Refer to one of Dave's classes so that we can be sure it is on the classpath
@@ -32,10 +35,10 @@ public class Project1 {
     int index = numArgs - 1;
     int numOption = numArgs - ARGUMENT_WITH_NO_OPTION;
     String arriveTime = toVerifiedTime(args[index--]);
-    String arriveDate = args[index--];
+    String arriveDate = toVerifiedDate(args[index--]);
     String dest = toVerifiedAirportCode(args[index--]);
     String departTime = toVerifiedTime(args[index--]);
-    String departDate = args[index--];
+    String departDate = toVerifiedDate(args[index--]);
     String src = toVerifiedAirportCode(args[index--]);
     int flightNum = toVerifiedFlightNam(args[index--]);
     String name = args[index];
@@ -48,6 +51,74 @@ public class Project1 {
 //        for (String arg : args) {
 //          System.out.println(arg);
 //        }
+  }
+
+  private static String toVerifiedDate(String date) {
+    if (!isValidDate(date)) {
+      System.err.println(INVALID_DATE);
+      System.exit(1);
+    }
+    String[] values = date.split("/");
+    System.out.println(Arrays.toString(values));
+    System.out.println(values[0]);
+    System.out.println(values.length);
+    return date;
+  }
+
+  private static boolean isValidDate(String date) {
+    String[] values = date.split("/");
+    boolean isValid = false;
+
+    if(values.length == 3 &&
+        isNumber(values[0]) && isNumber(values[1]) && isNumber(values[2])) {
+
+      int month = Integer.parseInt(values[0]);
+      int day = Integer.parseInt(values[1]);
+      int year = Integer.parseInt(values[2]);
+
+      if (isWithinYearRange(year)) {
+        isValid = isWithinMonthAndDayRange(month, day, year);
+      }
+    }
+    return isValid;
+  }
+
+  private static boolean isWithinYearRange(int year) {
+    return year > 2000 && year < 9999;
+  }
+
+  private static boolean isWithinMonthAndDayRange(int month, int day, int year) {
+    boolean isValid;
+    switch (month) {
+      case (2):
+        if (isLeapYear(year))
+          isValid = (day > 0 && day <= 29);
+        else
+          isValid = (day > 0 && day <= 28);
+        break;
+      case (1):
+      case (3):
+      case (5):
+      case (7):
+      case (8):
+      case (10):
+      case (12):
+        isValid = (day > 0 && day <= 31);
+        break;
+      case (4):
+      case (6):
+      case (9):
+      case (11):
+        isValid = (day > 0 && day <= 30);
+        break;
+      default:
+        isValid = false;
+    }
+    return isValid;
+  }
+
+  private static boolean isLeapYear(int year) {
+    return (year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0));
   }
 
   private static String toVerifiedTime(String time) {
