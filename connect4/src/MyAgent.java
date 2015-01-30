@@ -37,7 +37,22 @@ public class MyAgent extends Agent
      */
     public void move()
     {
+        int move = iCanWin();
 
+        if (move == -1) {
+            move = theyCanWin();
+            if (move == -1) {
+                move = bestMove();
+            }
+        }
+
+        moveOnColumn(move);
+    }
+
+
+
+    private int bestMove() {
+        return randomMove();
     }
 
     /**
@@ -66,7 +81,7 @@ public class MyAgent extends Agent
 
     /**
      * Returns the index of the top empty slot in a particular column.
-     * 
+     *
      * @param column The column to check.
      * @return the index of the top empty slot in a particular column; -1 if the column is already full.
      */
@@ -80,6 +95,21 @@ public class MyAgent extends Agent
             }
         }
         return lowestEmptySlot;
+    }
+
+    /**
+     * Returns an array of Lowest Empty Slot Index for each Column.
+     *
+     * @return an array of Lowest Empty Slot Index for each Column.
+     */
+    private int [] getAllLowestEmptyIndex() {
+        int numCol = myGame.getColumnCount();
+        int [] lowestIndexOfCol = new int[numCol];
+
+        for (int i = 0; i < numCol; ++i) {
+            lowestIndexOfCol[i] = getLowestEmptyIndex(myGame.getColumn(i));
+        }
+        return lowestIndexOfCol;
     }
 
     /**
@@ -105,11 +135,53 @@ public class MyAgent extends Agent
      * it can go ahead and make that move. Implement this method to return what column would
      * allow the agent to win.
      *
-     * @return the column that would allow the agent to win.
+     * @return the column that would allow the agent to win. -1 if no winning column.
      */
     public int iCanWin()
     {
-        return 0;
+        Connect4Game currentGame = new Connect4Game(myGame);
+        return getWinnerResult(currentGame, iAmRed);
+    }
+
+    /**
+     * Returns set the correct Color in the testSlot and return the char associate with the color.
+     * 'R' for red and 'Y' for yellow.
+     *
+     * @param currentGame is the Game that is being test for the next Winner
+     * @param testRed is the color being tested in the currentGame
+     * @return the column that would create a winner for the next move. -1 if no winning column.
+     */
+    private int getWinnerResult(Connect4Game currentGame, boolean testRed) {
+        int [] lowestIndexOfCol = getAllLowestEmptyIndex();
+
+        int numCol = myGame.getColumnCount();
+        boolean isFound = false;
+        int result = -1;
+        char winner;
+        int i = 0;
+
+        while (i < numCol && !isFound) {
+            Connect4Game testGame = new Connect4Game(currentGame);
+            int lowestIndex = lowestIndexOfCol[i];
+            if (lowestIndex > -1) {
+                Connect4Slot testSlot = testGame.getColumn(i).getSlot(lowestIndexOfCol[i]);
+
+                if (testRed) {
+                    testSlot.addRed();
+                    winner = 'R';
+                } else {
+                    testSlot.addYellow();
+                    winner = 'Y';
+                }
+                isFound = (testGame.gameWon() == winner);
+            }
+            ++i;
+        }
+
+        if (isFound)
+            result = i - 1;
+
+        return result;
     }
 
     /**
@@ -119,11 +191,12 @@ public class MyAgent extends Agent
      * available so your agent can block them. Implement this method to return what column should
      * be blocked to prevent the opponent from winning.
      *
-     * @return the column that would allow the opponent to win.
+     * @return the column that would allow the opponent to win. -1 if no winning column.
      */
     public int theyCanWin()
     {
-        return 0;
+        Connect4Game currentGame = new Connect4Game(myGame);
+        return getWinnerResult(currentGame, !iAmRed);
     }
 
     /**
