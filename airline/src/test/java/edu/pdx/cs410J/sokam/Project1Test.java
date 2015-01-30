@@ -297,6 +297,11 @@ public class Project1Test extends InvokeMainTestCase {
     assertThatStandardErrorContains(errorMessage, args);
   }
 
-
+  @Test
+  public void createAirlineClassShouldBeValid() {
+    Airline airline = new Airline();
+    MainMethodResult result = invokeProjectMain();
+    assertThat(result.getExitCode(), equalTo(0));
+  }
 
 }

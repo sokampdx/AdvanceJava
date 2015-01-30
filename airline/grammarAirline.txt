@@ -1,0 +1,36 @@
+
+
+
+proj1 = [options] args
+options = -print [-readme] | -readme [-print]
+args = name flightnum code datetime code datetime
+name = (letters|digits)*
+flightnum = (digits)*
+code = (letters)(letter)(letter)
+datetime = date time 
+time = hour:minute
+date = month/day/year
+
+hour = [0](digits) | (1)(digits) | (2)(0-3)
+minute = (0-6)(digits)
+
+month = [0](digits) | (1)(1|2)
+day = day28 | day29 | day30 | day31
+day28 = [0](digits) | (1)(digits) | (2)(0-8)
+day29 = day20 | (2)(digits)
+day30 = day29 | 30
+day31 = day30 | 31
+year = (ndigits)(digits)(digits)(digits)
+leap = 
+	if year / 400 == 0 then leap year
+	else if year / 4 == 0 && year / 100 != 0 then leap year
+
+
+letters = a-zA-Z
+digits = 0|ndigits
+ndigits = 1-9
+
+leap is
+    The year is evenly divisible by 4;
+    If the year can be evenly divided by 100, it is NOT a leap year, unless;
+    The year is also evenly divisible by 400. Then it is a leap year.
